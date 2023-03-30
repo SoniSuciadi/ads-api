@@ -1,8 +1,9 @@
 import express from "express";
-import { createAds } from "../../controllers/metta/metta.js";
+import { createAds, createNewCampaign } from "../../controllers/metta/metta.js";
 
 const mettaRouter = express.Router();
 
-mettaRouter.use("/", createAds);
+mettaRouter.post("/campaign", createNewCampaign);
+mettaRouter.post("/", createAds);
 
 export default mettaRouter;
