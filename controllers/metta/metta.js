@@ -1,52 +1,143 @@
 import { facebookConfig } from "../../configs/facebook.js";
-import client from "../../configs/pocketbase.js";
-import { createCampaign } from "../../services/metta/index.js";
+import {
+  createAd,
+  createAdset,
+  createCampaign,
+  querySearch,
+  updateAdById,
+  updateAdSetById,
+  updateCampaignById,
+} from "../../services/metta/index.js";
 
-export const createAds = async (req, res, next) => {
-  const { id } = req.body;
+export const createNewCampaign = async (req, res, next) => {
+  const { ad_account } = req.params;
+  const { access_token } = req.headers;
+
   try {
-    const content = await client.collection("research_ads").getOne(id, {
-      expand:
-        "account, hashtag, campaign.campaignObjectif, optimizationGoaloptimizationGoal",
+    const facebookClient = facebookConfig(access_token, ad_account);
+    const campaignId = await createCampaign(req.body, facebookClient);
+    res.status(200).json({
+      msg: `Success create campaign with name ${req.body.name}`,
+      id: campaignId,
     });
-    const facebookClient = facebookConfig(
-      content.expand.account.credentials.facebook.access_token,
-      content.expand.account.credentials.facebook.account_id
-    );
-    let campaignId = content.expand.campaign.campaign_id?.facebook || "";
-    if (!campaignId) {
-      campaignId = await createCampaign(
-        content.expand.campaign,
-        facebookClient
-      );
-    }
-
-    res.status(200).json({ msg: "oghe" });
   } catch (error) {
-    console.log("👻 ~ file: metta.js:11 ~ createAds ~ error:", error);
+    next(error);
   }
 };
-export const updateAds = (req, res, next) => {
+export const createNewAdset = async (req, res, next) => {
+  const { ad_account } = req.params;
+  const { access_token } = req.headers;
   try {
-  } catch (error) {}
-};
-export const changeStatusAds = (req, res, next) => {
-  try {
-  } catch (error) {}
-};
-export const createNewCampaign = async (req, res, next) => {
-  const { id } = req.body;
-  try {
-    const campaign = await client.collection("research_campaings").getOne(id, {
-      expand: "campaignObjectif, account",
+    const facebookClient = facebookConfig(access_token, ad_account);
+    const adsetId = await createAdset(req.body, facebookClient);
+    res.status(200).json({
+      msg: `Success create adset with name ${req.body.name}`,
+      id: adsetId,
     });
-    const facebookClient = facebookConfig(
-      campaign.expand.account.credentials.facebook.access_token,
-      campaign.expand.account.credentials.facebook.account_id
-    );
-    const campaignId = await createCampaign(campaign, facebookClient);
-    res.status(200).json({ msg: "oghe", id: campaignId });
   } catch (error) {
-    console.log("👻 ~ file: metta.js:51 ~ createNewCampaign ~ error:", error);
+    next(error);
+  }
+};
+export const createAds = async (req, res, next) => {
+  const { ad_account } = req.params;
+  const { access_token } = req.headers;
+  try {
+    const facebookClient = facebookConfig(access_token, ad_account);
+    const data = await createAd(req.body, facebookClient);
+
+    res.status(200).json({
+      messsage: `Berhasil membuat iklan dengan nama ${req.body.name}`,
+      id: data,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+export const updateCampaign = async (req, res, next) => {
+  const { ad_account, campaign_id } = req.params;
+  const { access_token } = req.headers;
+  try {
+    facebookConfig(access_token, ad_account);
+    await updateCampaignById(campaign_id, req.body);
+
+    res.status(200).json({
+      messsage: `Berhasil mengubah campaign `,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+export const updateAdset = async (req, res, next) => {
+  const { ad_account, adset_id } = req.params;
+  const { access_token } = req.headers;
+  try {
+    facebookConfig(access_token, ad_account);
+    await updateAdSetById(adset_id, req.body);
+
+    res.status(200).json({
+      messsage: `Berhasil mengubah adset`,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+export const updateAds = async (req, res, next) => {
+  const { ad_account, ad_id } = req.params;
+
+  const { access_token } = req.headers;
+  try {
+    const facebookClient = facebookConfig(access_token, ad_account);
+
+    await updateAdById(ad_id, req.body, facebookClient);
+
+    res.status(200).json({
+      messsage: `Berhasil mengubah Ad`,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+export const getLocationTargeting = async (req, res, next) => {
+  const { ad_account } = req.params;
+  const { city } = req.query;
+
+  const { access_token } = req.headers;
+  try {
+    facebookConfig(access_token, ad_account);
+
+    const result = await querySearch(
+      city.split(","),
+      "adgeolocation",
+      access_token
+    );
+
+    res.status(200).json({
+      messsage: `Success`,
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+export const getInterestTargeting = async (req, res, next) => {
+  const { ad_account } = req.params;
+  const { interest } = req.query;
+
+  const { access_token } = req.headers;
+  try {
+    facebookConfig(access_token, ad_account);
+
+    const result = await querySearch(
+      interest.split(","),
+      "adinterest",
+      access_token
+    );
+
+    res.status(200).json({
+      messsage: `Success`,
+      data: result,
+    });
+  } catch (error) {
+    next(error);
   }
 };

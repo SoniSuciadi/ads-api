@@ -7,6 +7,6 @@ const routers = express.Router();
  * @param {express.Response} res
  * @param {express.NextFunction} next
  */
-routers.use("/metta", mettaRouter);
+routers.use("/meta", mettaRouter);
 
 export default routers;
