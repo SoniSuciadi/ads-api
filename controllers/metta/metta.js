@@ -3,6 +3,7 @@ import {
   createAd,
   createAdset,
   createCampaign,
+  getStatisticById,
   querySearch,
   updateAdById,
   updateAdSetById,
@@ -133,6 +134,48 @@ export const getInterestTargeting = async (req, res, next) => {
       access_token
     );
 
+    res.status(200).json({
+      messsage: `Success`,
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+export const getStatisticCampaign = async (req, res, next) => {
+  const { campaign_id } = req.params;
+  const { access_token } = req.headers;
+  try {
+    facebookConfig(access_token);
+    const result = await getStatisticById(campaign_id, "Campaign");
+    res.status(200).json({
+      messsage: `Success`,
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+export const getStatisticAdset = async (req, res, next) => {
+  const { adset_id } = req.params;
+  const { access_token } = req.headers;
+  try {
+    facebookConfig(access_token);
+    const result = await getStatisticById(adset_id, "Adset");
+    res.status(200).json({
+      messsage: `Success`,
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+export const getStatisticAd = async (req, res, next) => {
+  const { ad_id } = req.params;
+  const { access_token } = req.headers;
+  try {
+    facebookConfig(access_token);
+    const result = await getStatisticById(ad_id, "ad");
     res.status(200).json({
       messsage: `Success`,
       data: result,

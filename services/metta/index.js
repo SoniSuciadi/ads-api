@@ -4,14 +4,15 @@ import { Campaign, AdSet, AdImage, Ad } from "facebook-nodejs-business-sdk";
 import { fetchUrltoBytes } from "../../helpers/fetchImageByte.js";
 
 export const createCampaign = async (data, facebookClient) => {
-  const { name, status, totalBudget, campaignObjectif } = data;
+  console.log("👻 ~ file: index.js:7 ~ createCampaign ~ data:", data);
+  const { name, status, totalBudget, campaignObjective } = data;
 
   const { _data } = await facebookClient.createCampaign([Campaign.Fields.Id], {
     [Campaign.Fields.name]: name,
     [Campaign.Fields.status]: status
       ? Campaign.Status.active
       : Campaign.Status.paused,
-    [Campaign.Fields.objective]: campaignObjectif,
+    [Campaign.Fields.objective]: campaignObjective,
     [Campaign.Fields.special_ad_categories]: ["NONE"],
     [Campaign.Fields.lifetime_budget]: totalBudget,
   });
@@ -58,6 +59,7 @@ export const createAd = async (data, facebookClient) => {
     pageId,
     description,
     status,
+    instagram_actor_id,
   } = data;
 
   const child_attachments = await Promise.all(
@@ -68,6 +70,7 @@ export const createAd = async (data, facebookClient) => {
     name,
     object_story_spec: {
       page_id: pageId,
+      instagram_actor_id,
       link_data: {
         message,
         link,
@@ -270,4 +273,18 @@ export const querySearch = async (arr, contex, access_token) => {
     )
   );
   return result.flatMap((el) => el);
+};
+
+export const getStatisticById = async (searchId, context) => {
+  const data =
+    context == "Campaign"
+      ? new Campaign(searchId)
+      : context == "Adset"
+      ? new AdSet(searchId)
+      : new Ad(searchId);
+
+  const insightsFields = ["impressions", "spend", "clicks", "actions"];
+  const insights = await data.getInsights(insightsFields);
+
+  return insights;
 };
