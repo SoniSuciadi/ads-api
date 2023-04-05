@@ -29,5 +29,5 @@ mettaRouter.patch("/ads/:ad_account/:ad_id", updateAds);
 
 mettaRouter.get("/targeting-location/:ad_account", getLocationTargeting);
 mettaRouter.get("/targeting-interest/:ad_account", getInterestTargeting);
-
+  
 export default mettaRouter;

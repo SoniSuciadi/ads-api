@@ -4,7 +4,6 @@ import { Campaign, AdSet, AdImage, Ad } from "facebook-nodejs-business-sdk";
 import { fetchUrltoBytes } from "../../helpers/fetchImageByte.js";
 
 export const createCampaign = async (data, facebookClient) => {
-  console.log("👻 ~ file: index.js:7 ~ createCampaign ~ data:", data);
   const { name, status, totalBudget, campaignObjective } = data;
 
   const { _data } = await facebookClient.createCampaign([Campaign.Fields.Id], {
