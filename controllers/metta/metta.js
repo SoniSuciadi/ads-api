@@ -44,7 +44,7 @@ export const createAds = async (req, res, next) => {
   const { access_token } = req.headers;
   try {
     const facebookClient = facebookConfig(access_token, ad_account);
-    const data = await createAd(req.body, facebookClient);
+    const data = await createAd(req.body, facebookClient, access_token);
 
     res.status(200).json({
       messsage: `Berhasil membuat iklan dengan nama ${req.body.name}`,

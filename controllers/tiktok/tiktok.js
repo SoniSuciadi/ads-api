@@ -8,8 +8,6 @@ import {
   updateAdById,
   updateAdsetById,
   updateCampaignById,
-  uploadImageFromUrl,
-  uploadVideoFromURL,
 } from "../../services/tiktok/index.js";
 
 export const createCampaign = async (req, res, next) => {

@@ -1,5 +1,7 @@
 import axios from "axios";
-import { Campaign, AdSet, AdImage, Ad } from "facebook-nodejs-business-sdk";
+import fbSdk from "facebook-nodejs-business-sdk";
+
+const { Campaign, AdSet, AdImage, Ad } = fbSdk;
 
 import { fetchUrltoBytes } from "../../helpers/fetchImageByte.js";
 
@@ -30,6 +32,7 @@ export const createAdset = async (data, facebookClient) => {
     status,
     bidAmount,
     targeting,
+    promoted_object,
   } = data;
 
   const response = await facebookClient.createAdSet(
@@ -44,11 +47,12 @@ export const createAdset = async (data, facebookClient) => {
       [AdSet.Fields.start_time]: new Date(startDate).toISOString(),
       [AdSet.Fields.end_time]: new Date(endDate).toISOString(),
       [AdSet.Fields.status]: status ? "ACTIVE" : "PAUSED",
+      [AdSet.Fields.promoted_object]: promoted_object,
     })
   );
   return response._data.id;
 };
-export const createAd = async (data, facebookClient) => {
+export const createAd = async (data, facebookClient, access_token) => {
   const {
     adSetId,
     contents,
@@ -87,6 +91,36 @@ export const createAd = async (data, facebookClient) => {
         object_story_spec: {
           page_id: pageId,
           video_data: { ...property },
+        },
+      };
+    } else if (contents[0].type == "FORM") {
+      // const result = await createLeadGenForm(contents[0], pageId, access_token);
+
+      dataAd = {
+        name,
+        object_story_spec: {
+          page_id: pageId,
+          template_data: {
+            call_to_action: {
+              type: "LEARN_MORE",
+              value: {
+                lead_gen_form_id: "1001204414190821",
+              },
+            },
+            link: contents[0].link,
+            name: name,
+            description: contents[0].description,
+          },
+        },
+      };
+    } else if (contents[0].type == "POSTING") {
+      const { resource } = contents[0];
+
+      dataAd = {
+        name,
+        object_story_spec: {
+          page_id: pageId,
+          link_data: { link: resource },
         },
       };
     } else {
@@ -286,4 +320,11 @@ export const getStatisticById = async (searchId, context) => {
   const insights = await data.getInsights(insightsFields);
 
   return insights;
+};
+
+const createLeadGenForm = async (formPayload, pageId, accessToken) => {
+  const url = `${process.env.GRAPH_API_FACEBOOK}/${pageId}/leadgen_forms?access_token=${accessToken}`;
+
+  const { data } = await axios.post(url, formPayload);
+  return data.id;
 };
