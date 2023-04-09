@@ -116,23 +116,36 @@ export const creatNewAd = async (payload, ad_account, tiktokClient) => {
     tiktokClient
   );
 
+  let creativePayload = {
+    ad_format: "SINGLE_VIDEO",
+    identity_id: pageId,
+    identity_type: "TT_USER",
+    ad_name: contents[0]?.title,
+    display_name: name,
+    video_id: content[0] || "v10033g50000cgm50kjc77u51rric8dg",
+    ad_text: contents[0]?.description,
+    landing_page_url: contents[0]?.link,
+    call_to_action: contents[0]?.call_to_action?.type,
+    image_ids: [imgTumb],
+  };
+  if (contents[0].type == "BOOST POST") {
+    const itemId = await getItemTiktokId(
+      contents[0].authCode,
+      tiktokClient,
+      ad_account
+    );
+    creativePayload = {
+      ad_format: "SINGLE_VIDEO",
+      identity_id: pageId,
+      identity_type: "TT_USER",
+      ad_name: contents[0].title,
+      tiktok_item_id: itemId,
+    };
+  }
   const { data } = await tiktokClient.post("/ad/create/", {
     advertiser_id: ad_account,
     adgroup_id: adSetId,
-    creatives: [
-      {
-        ad_format: "SINGLE_VIDEO",
-        identity_id: pageId,
-        identity_type: "TT_USER",
-        ad_name: contents[0].title,
-        display_name: name,
-        video_id: content[0] || "v10033g50000cgm50kjc77u51rric8dg",
-        ad_text: contents[0].description,
-        landing_page_url: contents[0].link,
-        call_to_action: contents[0].call_to_action.type,
-        image_ids: [imgTumb],
-      },
-    ],
+    creatives: [creativePayload],
     operation_status: status ? "ENABLE" : "DISABLE",
   });
   return data;
@@ -197,4 +210,17 @@ export const updateAdById = async (
   });
 
   return data;
+};
+const getItemTiktokId = async (authCode, tiktokClient, ad_account) => {
+  await tiktokClient.post("/tt_video/authorize/", {
+    advertiser_id: ad_account,
+    auth_code: authCode,
+  });
+
+  const { data } = await tiktokClient.get(
+    `/tt_video/list/?advertiser_id=${ad_account}`
+  );
+  console.log("👻 ~ file: index.js:238 ~ getItemTiktokId ~ data:", data);
+  return data.data.list.find((el) => el.item_info.auth_code == authCode)
+    ?.item_info?.item_id;
 };

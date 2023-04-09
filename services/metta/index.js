@@ -94,7 +94,7 @@ export const createAd = async (data, facebookClient, access_token) => {
         },
       };
     } else if (contents[0].type == "FORM") {
-      // const result = await createLeadGenForm(contents[0], pageId, access_token);
+      const result = await createLeadGenForm(contents[0], pageId, access_token);
 
       dataAd = {
         name,
@@ -104,7 +104,7 @@ export const createAd = async (data, facebookClient, access_token) => {
             call_to_action: {
               type: "LEARN_MORE",
               value: {
-                lead_gen_form_id: "1001204414190821",
+                lead_gen_form_id: result || "1001204414190821",
               },
             },
             link: contents[0].link,
@@ -113,7 +113,7 @@ export const createAd = async (data, facebookClient, access_token) => {
           },
         },
       };
-    } else if (contents[0].type == "POSTING") {
+    } else if (contents[0].type == "BOOST POST") {
       const { resource } = contents[0];
 
       dataAd = {
@@ -221,8 +221,6 @@ export const updateAdSetById = async (adset_id, newValue) => {
   targeting ? (adset.targeting = targeting) : "";
 
   await adset.update();
-
-  console.log("AdSet updated:", adset._data);
 };
 export const updateAdById = async (ad_id, newValue, facebookClient) => {
   const { contents, name, link, message, pageId, description, status } =
@@ -254,6 +252,40 @@ export const updateAdById = async (ad_id, newValue, facebookClient) => {
           object_story_spec: {
             page_id: pageId,
             video_data: { ...property },
+          },
+        };
+      } else if (contents[0].type == "FORM") {
+        const result = await createLeadGenForm(
+          contents[0],
+          pageId,
+          access_token
+        );
+
+        dataAd = {
+          name,
+          object_story_spec: {
+            page_id: pageId,
+            template_data: {
+              call_to_action: {
+                type: "LEARN_MORE",
+                value: {
+                  lead_gen_form_id: result || "1001204414190821",
+                },
+              },
+              link: contents[0].link,
+              name: name,
+              description: contents[0].description,
+            },
+          },
+        };
+      } else if (contents[0].type == "BOOST POST") {
+        const { resource } = contents[0];
+
+        dataAd = {
+          name,
+          object_story_spec: {
+            page_id: pageId,
+            link_data: { link: resource },
           },
         };
       } else {
