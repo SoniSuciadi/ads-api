@@ -5,6 +5,7 @@ import {
   creatNewAd,
   findCity,
   findInterest,
+  getAllAd,
   updateAdById,
   updateAdsetById,
   updateCampaignById,
@@ -200,6 +201,20 @@ export const getInterestTargeting = async (req, res, next) => {
       ad_account,
       tiktokClient
     );
+    res.status(200).json({
+      message: "Success",
+      data,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+export const getAllAds = async (req, res, next) => {
+  const { ad_account } = req.params;
+  try {
+    const tiktokClient = tc(req.headers.access_token);
+
+    const data = await getAllAd(tiktokClient, ad_account);
     res.status(200).json({
       message: "Success",
       data,

@@ -1,7 +1,11 @@
 import axios from "axios";
-import fbSdk from "facebook-nodejs-business-sdk";
-
-const { Campaign, AdSet, AdImage, Ad } = fbSdk;
+import {
+  Campaign,
+  AdSet,
+  AdImage,
+  Ad,
+  AdAccount,
+} from "facebook-nodejs-business-sdk";
 
 import { fetchUrltoBytes } from "../../helpers/fetchImageByte.js";
 
@@ -359,4 +363,33 @@ const createLeadGenForm = async (formPayload, pageId, accessToken) => {
 
   const { data } = await axios.post(url, formPayload);
   return data.id;
+};
+
+export const fetchAllAds = async (facebookClient) => {
+  try {
+    const data = await facebookClient
+      .getAds([
+        Ad.Fields.campaign_id,
+        Ad.Fields.campaign,
+        Ad.Fields.adset_id,
+        Ad.Fields.adset,
+        Ad.Fields.id,
+        Ad.Fields.name,
+        Ad.Fields.tracking_specs,
+        Ad.Fields.status,
+      ])
+      .then((ad) =>
+        ad.map((el) => ({
+          campaignId: el._data.campaign_id,
+          adSetId: el._data.adset_id,
+          id: el._data.id,
+          name: el._data.name,
+          status: el._data.status,
+        }))
+      );
+
+    return data;
+  } catch (error) {
+    console.error("Error fetching ads:", error);
+  }
 };

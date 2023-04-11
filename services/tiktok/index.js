@@ -224,3 +224,13 @@ const getItemTiktokId = async (authCode, tiktokClient, ad_account) => {
   return data.data.list.find((el) => el.item_info.auth_code == authCode)
     ?.item_info?.item_id;
 };
+export const getAllAd = async (tiktokClient, ad_account) => {
+  const data = await tiktokClient.get(`/ad/get/?advertiser_id=${ad_account}`);
+  return data.data.data.list.map((el) => ({
+    campaignId: el.campaign_id,
+    adSetId: el.adgroup_id,
+    id: el.ad_id,
+    name: el.ad_name,
+    status: el.operation_status,
+  }));
+};
