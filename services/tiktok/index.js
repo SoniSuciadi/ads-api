@@ -220,7 +220,6 @@ const getItemTiktokId = async (authCode, tiktokClient, ad_account) => {
   const { data } = await tiktokClient.get(
     `/tt_video/list/?advertiser_id=${ad_account}`
   );
-  console.log("👻 ~ file: index.js:238 ~ getItemTiktokId ~ data:", data);
   return data.data.list.find((el) => el.item_info.auth_code == authCode)
     ?.item_info?.item_id;
 };
@@ -233,4 +232,17 @@ export const getAllAd = async (tiktokClient, ad_account) => {
     name: el.ad_name,
     status: el.operation_status,
   }));
+};
+export const getCommentAd = async (
+  tiktokClient,
+  ad_account,
+  endDate,
+  startDate,
+  id,
+  search_field
+) => {
+  const data = await tiktokClient.get(
+    `/comment/list/?advertiser_id=${ad_account}&search_field=${search_field}&end_time=${endDate}&start_time=${startDate}&search_value=${id}`
+  );
+  return data.data.data.comments;
 };

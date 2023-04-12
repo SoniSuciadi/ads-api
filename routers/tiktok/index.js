@@ -4,6 +4,7 @@ import {
   createAdset,
   createCampaign,
   getAllAds,
+  getComment,
   getInterestTargeting,
   getLocationTargeting,
   updateAd,
@@ -13,6 +14,7 @@ import {
 const tiktokRouter = express.Router();
 
 tiktokRouter.get("/:ad_account", getAllAds);
+tiktokRouter.post("/comment/:ad_account", getComment);
 tiktokRouter.post("/campaign/:ad_account", createCampaign);
 tiktokRouter.patch("/campaign/:ad_account/:campaign_id", updateCampaign);
 
