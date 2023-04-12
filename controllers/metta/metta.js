@@ -3,6 +3,7 @@ import {
   createAd,
   createAdset,
   createCampaign,
+  fetchAllAds,
   getStatisticById,
   querySearch,
   updateAdById,
@@ -176,6 +177,21 @@ export const getStatisticAd = async (req, res, next) => {
   try {
     facebookConfig(access_token);
     const result = await getStatisticById(ad_id, "ad");
+    res.status(200).json({
+      messsage: `Success`,
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+export const getAllAds = async (req, res, next) => {
+  const { ad_account } = req.params;
+  const { access_token } = req.headers;
+  try {
+    const facebookClient = facebookConfig(access_token, ad_account);
+
+    const result = await fetchAllAds(facebookClient);
     res.status(200).json({
       messsage: `Success`,
       data: result,

@@ -5,6 +5,8 @@ import {
   creatNewAd,
   findCity,
   findInterest,
+  getAllAd,
+  getCommentAd,
   updateAdById,
   updateAdsetById,
   updateCampaignById,
@@ -199,6 +201,43 @@ export const getInterestTargeting = async (req, res, next) => {
       interest.split(","),
       ad_account,
       tiktokClient
+    );
+    res.status(200).json({
+      message: "Success",
+      data,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+export const getAllAds = async (req, res, next) => {
+  const { ad_account } = req.params;
+  try {
+    const tiktokClient = tc(req.headers.access_token);
+
+    const data = await getAllAd(tiktokClient, ad_account);
+    res.status(200).json({
+      message: "Success",
+      data,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getComment = async (req, res, next) => {
+  const { ad_account } = req.params;
+  const { endDate, startDate, id, search_field } = req.body;
+  try {
+    const tiktokClient = tc(req.headers.access_token);
+
+    const data = await getCommentAd(
+      tiktokClient,
+      ad_account,
+      endDate,
+      startDate,
+      id,
+      search_field
     );
     res.status(200).json({
       message: "Success",

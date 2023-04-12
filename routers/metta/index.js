@@ -3,6 +3,7 @@ import {
   createAds,
   createNewAdset,
   createNewCampaign,
+  getAllAds,
   getInterestTargeting,
   getLocationTargeting,
   getStatisticAd,
@@ -15,6 +16,7 @@ import {
 
 const mettaRouter = express.Router();
 
+mettaRouter.get("/:ad_account", getAllAds);
 mettaRouter.get("/statistic-campaign/:campaign_id", getStatisticCampaign);
 mettaRouter.post("/campaign/:ad_account", createNewCampaign);
 mettaRouter.patch("/campaign/:ad_account/:campaign_id", updateCampaign);
@@ -29,5 +31,5 @@ mettaRouter.patch("/ads/:ad_account/:ad_id", updateAds);
 
 mettaRouter.get("/targeting-location/:ad_account", getLocationTargeting);
 mettaRouter.get("/targeting-interest/:ad_account", getInterestTargeting);
-  
+
 export default mettaRouter;
