@@ -19,7 +19,7 @@ export const createNewCampaign = async (req, res, next) => {
   const { access_token } = req.headers;
   console.log(
     "👻 ~ file: metta.js:20 ~ createNewCampaign ~ access_token:",
-    access_token,
+    req.headers,
     "dari req heder"
   );
 
