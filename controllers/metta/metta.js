@@ -17,9 +17,14 @@ import {
 export const createNewCampaign = async (req, res, next) => {
   const { ad_account } = req.params;
   const { access_token } = req.headers;
+  console.log(
+    "👻 ~ file: metta.js:20 ~ createNewCampaign ~ access_token:",
+    access_token,
+    "dari req heder"
+  );
 
   try {
-    const facebookClient = facebookConfig(access_token, ad_account);
+    const facebookClient = await facebookConfig(access_token, ad_account);
     const campaignId = await createCampaign(req.body, facebookClient);
     res.status(200).json({
       msg: `Success create campaign with name ${req.body.name}`,
@@ -240,7 +245,7 @@ export const replyComment = async (req, res, next) => {
     res.status(200).json({
       messsage: `Success`,
       data: result,
-    });   
+    });
   } catch (error) {
     next(error);
   }
