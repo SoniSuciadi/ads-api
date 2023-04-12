@@ -366,30 +366,52 @@ const createLeadGenForm = async (formPayload, pageId, accessToken) => {
 };
 
 export const fetchAllAds = async (facebookClient) => {
-  try {
-    const data = await facebookClient
-      .getAds([
-        Ad.Fields.campaign_id,
-        Ad.Fields.campaign,
-        Ad.Fields.adset_id,
-        Ad.Fields.adset,
-        Ad.Fields.id,
-        Ad.Fields.name,
-        Ad.Fields.tracking_specs,
-        Ad.Fields.status,
-      ])
-      .then((ad) =>
-        ad.map((el) => ({
-          campaignId: el._data.campaign_id,
-          adSetId: el._data.adset_id,
-          id: el._data.id,
-          name: el._data.name,
-          status: el._data.status,
-        }))
-      );
+  const data = await facebookClient
+    .getAds([
+      Ad.Fields.campaign_id,
+      Ad.Fields.campaign,
+      Ad.Fields.adset_id,
+      Ad.Fields.adset,
+      Ad.Fields.id,
+      Ad.Fields.name,
+      Ad.Fields.tracking_specs,
+      Ad.Fields.status,
+    ])
+    .then((ad) =>
+      ad.map((el) => ({
+        campaignId: el._data.campaign_id,
+        adSetId: el._data.adset_id,
+        id: el._data.id,
+        name: el._data.name,
+        status: el._data.status,
+      }))
+    );
 
-    return data;
-  } catch (error) {
-    console.error("Error fetching ads:", error);
-  }
+  return data;
+};
+export const fetchCommentById = async (postId, access_token_page) => {
+  const data = await axios.get(
+    `${process.env.GRAPH_API_FACEBOOK}/${postId}/comments?access_token=${access_token_page}`
+  );
+  return data.data.data;
+};
+export const getAllInstagramPost = async (accountId, access_token_page) => {
+  const data = await axios.get(
+    `${process.env.GRAPH_API_FACEBOOK}/${accountId}/media?access_token=${access_token_page}`
+  );
+  return data.data.data;
+};
+export const replyCommentPosting = async (
+  commentId,
+  access_token_page,
+  message,
+  socialMedia
+) => {
+  const data = await axios.post(
+    `${process.env.GRAPH_API_FACEBOOK}/${commentId}/${
+      socialMedia != "Instagram" ? "comments" : "replies"
+    }?access_token=${access_token_page}`,
+    { message }
+  );
+  return data.data.data;
 };

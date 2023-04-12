@@ -4,8 +4,11 @@ import {
   createAdset,
   createCampaign,
   fetchAllAds,
+  fetchCommentById,
+  getAllInstagramPost,
   getStatisticById,
   querySearch,
+  replyCommentPosting,
   updateAdById,
   updateAdSetById,
   updateCampaignById,
@@ -196,6 +199,48 @@ export const getAllAds = async (req, res, next) => {
       messsage: `Success`,
       data: result,
     });
+  } catch (error) {
+    next(error);
+  }
+};
+export const getComments = async (req, res, next) => {
+  const { postId, access_token_page } = req.query;
+  try {
+    const result = await fetchCommentById(postId, access_token_page);
+    res.status(200).json({
+      messsage: `Success`,
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+export const getInstagramPost = async (req, res, next) => {
+  const { access_token_page, accountId } = req.query;
+  try {
+    const result = await getAllInstagramPost(accountId, access_token_page);
+    res.status(200).json({
+      messsage: `Success`,
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+export const replyComment = async (req, res, next) => {
+  const { access_token_page, commentId, socialMedia } = req.query;
+  const { message } = req.body;
+  try {
+    const result = await replyCommentPosting(
+      commentId,
+      access_token_page,
+      message,
+      socialMedia
+    );
+    res.status(200).json({
+      messsage: `Success`,
+      data: result,
+    });   
   } catch (error) {
     next(error);
   }
