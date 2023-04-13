@@ -56,7 +56,7 @@ export const createAdset = async (data, facebookClient) => {
   );
   return response._data.id;
 };
-export const createAd = async (data, facebookClient, access_token) => {
+export const createAd = async (data, facebookClient, token) => {
   const {
     adSetId,
     contents,
@@ -98,7 +98,7 @@ export const createAd = async (data, facebookClient, access_token) => {
         },
       };
     } else if (contents[0].type == "FORM") {
-      const result = await createLeadGenForm(contents[0], pageId, access_token);
+      const result = await createLeadGenForm(contents[0], pageId, token);
 
       dataAd = {
         name,
@@ -259,11 +259,7 @@ export const updateAdById = async (ad_id, newValue, facebookClient) => {
           },
         };
       } else if (contents[0].type == "FORM") {
-        const result = await createLeadGenForm(
-          contents[0],
-          pageId,
-          access_token
-        );
+        const result = await createLeadGenForm(contents[0], pageId, token);
 
         dataAd = {
           name,
@@ -327,13 +323,13 @@ export const updateAdById = async (ad_id, newValue, facebookClient) => {
 
   return ad_id;
 };
-export const querySearch = async (arr, contex, access_token) => {
+export const querySearch = async (arr, contex, token) => {
   const result = await Promise.all(
     arr.map((el) =>
       axios
         .get(`${process.env.GRAPH_API_FACEBOOK}/search`, {
           params: {
-            access_token,
+            access_token: token,
             q: el,
             type: contex,
           },

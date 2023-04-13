@@ -15,7 +15,7 @@ import {
 export const createCampaign = async (req, res, next) => {
   const { ad_account } = req.params;
   try {
-    const tiktokClient = tc(req.headers.access_token);
+    const tiktokClient = tc(req.headers.token);
 
     const data = await createNewCampaign(req.body, tiktokClient, ad_account);
     if (data.code) {
@@ -36,7 +36,7 @@ export const createAdset = async (req, res, next) => {
   const { ad_account } = req.params;
 
   try {
-    const tiktokClient = tc(req.headers.access_token);
+    const tiktokClient = tc(req.headers.token);
     const data = await createNewAdgroup(req.body, ad_account, tiktokClient);
     if (data.code) {
       throw {
@@ -56,7 +56,7 @@ export const createAd = async (req, res, next) => {
   const { ad_account } = req.params;
 
   try {
-    const tiktokClient = tc(req.headers.access_token);
+    const tiktokClient = tc(req.headers.token);
 
     const result = await creatNewAd(req.body, ad_account, tiktokClient);
     if (result.code) {
@@ -77,7 +77,7 @@ export const updateCampaign = async (req, res, next) => {
   const { name, campaignObjective, budgetMode, totalBudget, status } = req.body;
   const { ad_account, campaign_id } = req.params;
   try {
-    const tiktokClient = tc(req.headers.access_token);
+    const tiktokClient = tc(req.headers.token);
     const payload = {
       advertiser_id: ad_account,
       campaign_name: name,
@@ -118,7 +118,7 @@ export const updateAdset = async (req, res, next) => {
     budget,
   } = req.body;
   try {
-    const tiktokClient = tc(req.headers.access_token);
+    const tiktokClient = tc(req.headers.token);
     const payload = {
       advertiser_id: ad_account,
       campaign_id: campaignId,
@@ -160,7 +160,7 @@ export const updateAd = async (req, res, next) => {
   const { ad_account, ad_id } = req.params;
 
   try {
-    const tiktokClient = tc(req.headers.access_token);
+    const tiktokClient = tc(req.headers.token);
 
     const data = await updateAdById(req.body, tiktokClient, ad_account, ad_id);
     if (data.code) {
@@ -195,7 +195,7 @@ export const getInterestTargeting = async (req, res, next) => {
 
   const { ad_account } = req.params;
   try {
-    const tiktokClient = tc(req.headers.access_token);
+    const tiktokClient = tc(req.headers.token);
 
     const data = await findInterest(
       interest.split(","),
@@ -213,7 +213,7 @@ export const getInterestTargeting = async (req, res, next) => {
 export const getAllAds = async (req, res, next) => {
   const { ad_account } = req.params;
   try {
-    const tiktokClient = tc(req.headers.access_token);
+    const tiktokClient = tc(req.headers.token);
 
     const data = await getAllAd(tiktokClient, ad_account);
     res.status(200).json({
@@ -229,7 +229,7 @@ export const getComment = async (req, res, next) => {
   const { ad_account } = req.params;
   const { endDate, startDate, id, search_field } = req.body;
   try {
-    const tiktokClient = tc(req.headers.access_token);
+    const tiktokClient = tc(req.headers.token);
 
     const data = await getCommentAd(
       tiktokClient,

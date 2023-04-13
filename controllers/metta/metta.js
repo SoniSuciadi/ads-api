@@ -16,15 +16,15 @@ import {
 
 export const createNewCampaign = async (req, res, next) => {
   const { ad_account } = req.params;
-  const { access_token } = req.headers;
+  const { token } = req.headers;
   console.log(
-    "👻 ~ file: metta.js:20 ~ createNewCampaign ~ access_token:",
+    "👻 ~ file: metta.js:20 ~ createNewCampaign ~ token:",
     req.headers,
     "dari req heder"
   );
 
   try {
-    const facebookClient = await facebookConfig(access_token, ad_account);
+    const facebookClient = await facebookConfig(token, ad_account);
     const campaignId = await createCampaign(req.body, facebookClient);
     res.status(200).json({
       msg: `Success create campaign with name ${req.body.name}`,
@@ -36,9 +36,9 @@ export const createNewCampaign = async (req, res, next) => {
 };
 export const createNewAdset = async (req, res, next) => {
   const { ad_account } = req.params;
-  const { access_token } = req.headers;
+  const { token } = req.headers;
   try {
-    const facebookClient = facebookConfig(access_token, ad_account);
+    const facebookClient = facebookConfig(token, ad_account);
     const adsetId = await createAdset(req.body, facebookClient);
     res.status(200).json({
       msg: `Success create adset with name ${req.body.name}`,
@@ -50,10 +50,10 @@ export const createNewAdset = async (req, res, next) => {
 };
 export const createAds = async (req, res, next) => {
   const { ad_account } = req.params;
-  const { access_token } = req.headers;
+  const { token } = req.headers;
   try {
-    const facebookClient = facebookConfig(access_token, ad_account);
-    const data = await createAd(req.body, facebookClient, access_token);
+    const facebookClient = facebookConfig(token, ad_account);
+    const data = await createAd(req.body, facebookClient, token);
 
     res.status(200).json({
       messsage: `Berhasil membuat iklan dengan nama ${req.body.name}`,
@@ -65,9 +65,9 @@ export const createAds = async (req, res, next) => {
 };
 export const updateCampaign = async (req, res, next) => {
   const { ad_account, campaign_id } = req.params;
-  const { access_token } = req.headers;
+  const { token } = req.headers;
   try {
-    facebookConfig(access_token, ad_account);
+    facebookConfig(token, ad_account);
     await updateCampaignById(campaign_id, req.body);
 
     res.status(200).json({
@@ -79,9 +79,9 @@ export const updateCampaign = async (req, res, next) => {
 };
 export const updateAdset = async (req, res, next) => {
   const { ad_account, adset_id } = req.params;
-  const { access_token } = req.headers;
+  const { token } = req.headers;
   try {
-    facebookConfig(access_token, ad_account);
+    facebookConfig(token, ad_account);
     await updateAdSetById(adset_id, req.body);
 
     res.status(200).json({
@@ -94,9 +94,9 @@ export const updateAdset = async (req, res, next) => {
 export const updateAds = async (req, res, next) => {
   const { ad_account, ad_id } = req.params;
 
-  const { access_token } = req.headers;
+  const { token } = req.headers;
   try {
-    const facebookClient = facebookConfig(access_token, ad_account);
+    const facebookClient = facebookConfig(token, ad_account);
 
     await updateAdById(ad_id, req.body, facebookClient);
 
@@ -111,15 +111,11 @@ export const getLocationTargeting = async (req, res, next) => {
   const { ad_account } = req.params;
   const { city } = req.query;
 
-  const { access_token } = req.headers;
+  const { token } = req.headers;
   try {
-    facebookConfig(access_token, ad_account);
+    facebookConfig(token, ad_account);
 
-    const result = await querySearch(
-      city.split(","),
-      "adgeolocation",
-      access_token
-    );
+    const result = await querySearch(city.split(","), "adgeolocation", token);
 
     res.status(200).json({
       messsage: `Success`,
@@ -133,15 +129,11 @@ export const getInterestTargeting = async (req, res, next) => {
   const { ad_account } = req.params;
   const { interest } = req.query;
 
-  const { access_token } = req.headers;
+  const { token } = req.headers;
   try {
-    facebookConfig(access_token, ad_account);
+    facebookConfig(token, ad_account);
 
-    const result = await querySearch(
-      interest.split(","),
-      "adinterest",
-      access_token
-    );
+    const result = await querySearch(interest.split(","), "adinterest", token);
 
     res.status(200).json({
       messsage: `Success`,
@@ -153,9 +145,9 @@ export const getInterestTargeting = async (req, res, next) => {
 };
 export const getStatisticCampaign = async (req, res, next) => {
   const { campaign_id } = req.params;
-  const { access_token } = req.headers;
+  const { token } = req.headers;
   try {
-    facebookConfig(access_token);
+    facebookConfig(token);
     const result = await getStatisticById(campaign_id, "Campaign");
     res.status(200).json({
       messsage: `Success`,
@@ -167,9 +159,9 @@ export const getStatisticCampaign = async (req, res, next) => {
 };
 export const getStatisticAdset = async (req, res, next) => {
   const { adset_id } = req.params;
-  const { access_token } = req.headers;
+  const { token } = req.headers;
   try {
-    facebookConfig(access_token);
+    facebookConfig(token);
     const result = await getStatisticById(adset_id, "Adset");
     res.status(200).json({
       messsage: `Success`,
@@ -181,9 +173,9 @@ export const getStatisticAdset = async (req, res, next) => {
 };
 export const getStatisticAd = async (req, res, next) => {
   const { ad_id } = req.params;
-  const { access_token } = req.headers;
+  const { token } = req.headers;
   try {
-    facebookConfig(access_token);
+    facebookConfig(token);
     const result = await getStatisticById(ad_id, "ad");
     res.status(200).json({
       messsage: `Success`,
@@ -195,9 +187,9 @@ export const getStatisticAd = async (req, res, next) => {
 };
 export const getAllAds = async (req, res, next) => {
   const { ad_account } = req.params;
-  const { access_token } = req.headers;
+  const { token } = req.headers;
   try {
-    const facebookClient = facebookConfig(access_token, ad_account);
+    const facebookClient = facebookConfig(token, ad_account);
 
     const result = await fetchAllAds(facebookClient);
     res.status(200).json({
