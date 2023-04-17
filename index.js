@@ -11,13 +11,48 @@ const PORT = process.env.PORT || 80;
 const app = express();
 
 app.use(cors());
+
 app.use((req, res, next) => {
   console.log(req.headers, "--------------------");
   next();
 });
+
 app.use(morganHttpLogger);
 app.use(bodyParser.json({ limit: "30mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
+app.get("/webhook", (req, res) => {
+  const mode = req.query["hub.mode"];
+  const token = req.query["hub.verify_token"];
+  const challenge = req.query["hub.challenge"];
+
+  if (mode === "subscribe" && token === process.env.TOKEN_VERIFICATION) {
+    res.status(200).send(challenge);
+  } else {
+    res.sendStatus(403);
+  }
+});
+
+app.post("/webhook", (req, res) => {
+  const data = req.body;
+  console.log("👻 ~ file: index.js:28 ~ app.post ~ data:", data);
+
+  if (data.object === "page") {
+    data.entry.forEach((entry) => {
+      entry.messaging.forEach((messagingEvent) => {
+        const senderId = messagingEvent.sender.id;
+        const message = messagingEvent.message.text;
+
+        if (senderId && message) {
+          console.log(`Message received from ${senderId}: ${message}`);
+        }
+      });
+    });
+
+    res.sendStatus(200);
+  } else {
+    res.sendStatus(404);
+  }
+});
 app.use("/", routers);
 app.use(errorHandler);
 
