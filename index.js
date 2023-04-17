@@ -24,6 +24,7 @@ app.get("/webhook", (req, res) => {
   const mode = req.query["hub.mode"];
   const token = req.query["hub.verify_token"];
   const challenge = req.query["hub.challenge"];
+  console.log("👻 ~ file: index.js:26 ~ app.get ~ token:", token);
 
   if (mode === "subscribe" && token === process.env.TOKEN_VERIFICATION) {
     res.status(200).send(challenge);
@@ -34,7 +35,10 @@ app.get("/webhook", (req, res) => {
 
 app.post("/webhook", (req, res) => {
   const data = req.body;
-  console.log("👻 ~ file: index.js:28 ~ app.post ~ data:", data);
+  console.log(
+    "👻 ~ file: index.js:28 ~ app.post ~ data:",
+    JSON.stringify(data)
+  );
 
   if (data.object === "page") {
     data.entry.forEach((entry) => {
