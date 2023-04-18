@@ -411,3 +411,74 @@ export const replyCommentPosting = async (
   );
   return data.data.data;
 };
+
+export const featchAllMessages = async (access_token_page, page_id) => {
+  const {
+    data: { data },
+  } = await axios.get(
+    `${process.env.GRAPH_API_FACEBOOK}/${page_id}/conversations?access_token=${access_token_page}&fields=messages`
+  );
+
+  return await Promise.all(
+    data.map(async (el) => {
+      return await axios
+        .get(
+          `${process.env.GRAPH_API_FACEBOOK}/${el.messages.data[0].id}?access_token=${access_token_page}&fields=id,created_time,from,to,message`
+        )
+        .then(({ data }) => {
+          return {
+            id: el.id,
+            accountName:
+              data.from.id == page_id ? data.to.data[0].name : data.from.name,
+            accountId:
+              data.from.id == page_id ? data.to.data[0].id : data.from.id,
+            sumOfConversations: el.messages.data.length,
+          };
+        });
+    })
+  );
+};
+
+export const getChats = async (access_token_page, page_id, user_id) => {
+  const {
+    data: {
+      data: [data],
+    },
+  } = await axios.get(
+    `${process.env.GRAPH_API_FACEBOOK}/${page_id}/conversations?access_token=${access_token_page}&fields=messages&user_id=${user_id}`
+  );
+  return await Promise.all(
+    data.messages.data.map(async (el) => {
+      return await axios
+        .get(
+          `${process.env.GRAPH_API_FACEBOOK}/${el.id}?access_token=${access_token_page}&fields=id,created_time,from,to,message`
+        )
+        .then(({ data }) => {
+          return {
+            id: data.id,
+            from: data.from.id == page_id ? "me" : data.from.name,
+            to: data.to.data[0].id == page_id ? "me" : data.to.data[0].name,
+            message: data.message,
+          };
+        });
+    })
+  );
+};
+export const sendOneChat = async (
+  access_token_page,
+  page_id,
+  user_id,
+  message
+) => {
+  const { data } = await axios.post(
+    `${process.env.GRAPH_API_FACEBOOK}/${page_id}/messages?access_token=${access_token_page}`,
+    {
+      recipient: {
+        id: user_id,
+      },
+      messaging_type: "RESPONSE",
+      message,
+    }
+  );
+  return data;
+};

@@ -4,14 +4,17 @@ import {
   createNewAdset,
   createNewCampaign,
   getAllAds,
+  getChatUser,
   getComments,
   getInstagramPost,
   getInterestTargeting,
   getLocationTargeting,
+  getMessages,
   getStatisticAd,
   getStatisticAdset,
   getStatisticCampaign,
   replyComment,
+  sendChat,
   updateAds,
   updateAdset,
   updateCampaign,
@@ -22,6 +25,12 @@ const mettaRouter = express.Router();
 mettaRouter.get("/instagram-post", getInstagramPost);
 mettaRouter.get("/comments", getComments);
 mettaRouter.post("/comments", replyComment);
+
+mettaRouter.get("/chats/:page_id/:user_id", getChatUser);
+mettaRouter.post("/chats/:page_id/:user_id", sendChat);
+
+mettaRouter.get("/messages/:page_id", getMessages);
+
 mettaRouter.get("/:ad_account", getAllAds);
 mettaRouter.get("/statistic-campaign/:campaign_id", getStatisticCampaign);
 mettaRouter.post("/campaign/:ad_account", createNewCampaign);

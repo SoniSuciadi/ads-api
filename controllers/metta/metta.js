@@ -3,12 +3,15 @@ import {
   createAd,
   createAdset,
   createCampaign,
+  featchAllMessages,
   fetchAllAds,
   fetchCommentById,
   getAllInstagramPost,
+  getChats,
   getStatisticById,
   querySearch,
   replyCommentPosting,
+  sendOneChat,
   updateAdById,
   updateAdSetById,
   updateCampaignById,
@@ -237,6 +240,53 @@ export const replyComment = async (req, res, next) => {
     res.status(200).json({
       messsage: `Success`,
       data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getMessages = async (req, res, next) => {
+  const { page_id } = req.params;
+  const { access_token_page } = req.query;
+  try {
+    const data = await featchAllMessages(access_token_page, page_id);
+    res.status(200).json({
+      messsage: `Success`,
+      data,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+export const getChatUser = async (req, res, next) => {
+  const { page_id, user_id } = req.params;
+  const { access_token_page } = req.query;
+  try {
+    const data = await getChats(access_token_page, page_id, user_id);
+    res.status(200).json({
+      messsage: `Success`,
+      data,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+export const sendChat = async (req, res, next) => {
+  const { page_id, user_id } = req.params;
+  const { access_token_page } = req.query;
+  const { message } = req.body;
+
+  try {
+    const data = await sendOneChat(
+      access_token_page,
+      page_id,
+      user_id,
+      message
+    );
+    res.status(200).json({
+      messsage: `Success`,
+      data,
     });
   } catch (error) {
     next(error);
